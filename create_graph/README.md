@@ -65,7 +65,7 @@ python3 convert_graph_from_osmnx.py --bbox 37.781233 37.760753 -122.428663 -122.
 	```
 
 
-### Prerequesites
+### Prerequisites
 * Downdload .osm file from [OpenStreetMap](https://wiki.openstreetmap.org/wiki/Planet.osm). Extract .osm to smaller pieces if needed (ex. using [osmsis](https://wiki.openstreetmap.org/wiki/Osmosis))
 * Convert .som to Postgres database by using [osm2pgrouting](http://pgrouting.org/docs/tools/osm2pgrouting.html)
 
