@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 
 @Configuration
-@ConfigurationProperties(prefix = "graph.mongodb")
+@ConfigurationProperties(prefix = "elena.graph.mongodb")
 @EnableMongoRepositories(mongoTemplateRef = "graphMongoTemplate")
 public class MongodbConfig extends AbstractMongodbConfig {
 

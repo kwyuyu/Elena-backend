@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Configuration
-@ConfigurationProperties("elena.graph")
+@ConfigurationProperties("elena.graph.inmemory")
 public class InMemoryGraphConfig {
 
     private String filePath;
