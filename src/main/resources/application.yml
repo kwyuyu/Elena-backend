@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: @spring.profiles.active@
+
+# mongodb config
+graph:
+  mongodb:
+    database: routing
+    port: 27017
+    host: localhost
+    username: user
+    password: password
+    maxPoolSize: 100
+
+
+# app config
+server:
+  port: 5000
+
+elena:
+  graph:
+    filePath: "graph.json"
