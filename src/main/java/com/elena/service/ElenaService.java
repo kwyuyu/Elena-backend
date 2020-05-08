@@ -1,7 +1,7 @@
 package com.elena.service;
 
-import com.elena.model.ElenaNode;
 import com.elena.model.LonLat;
+import com.elena.model.Node;
 import com.elena.model.Path;
 import com.elena.repository.GeoDataDAL;
 import com.elena.pathfinder.PathFinder;
@@ -28,8 +28,8 @@ public class ElenaService {
 
     public List<Path> findPathByAddress(PathFinder pathFinder, String addressFrom, String addressTo) {
         pathFinder.setGeoDataDAL(this.geoDataDAL);
-        ElenaNode from = this.geoDataDAL.getNodeByAddress(ElenaUtils.elenaUrlDecode(addressFrom));
-        ElenaNode to = this.geoDataDAL.getNodeByAddress(ElenaUtils.elenaUrlDecode(addressTo));
+        Node from = this.geoDataDAL.getNodeByAddress(ElenaUtils.elenaUrlDecode(addressFrom));
+        Node to = this.geoDataDAL.getNodeByAddress(ElenaUtils.elenaUrlDecode(addressTo));
 
         return pathFinder.findPath(from, to);
     }
@@ -40,8 +40,8 @@ public class ElenaService {
         String[] lonLatFromString = lonLatFrom.split(",");
         String[] lonLatToString = lonLatTo.split(",");
 
-        ElenaNode from = this.geoDataDAL.getNearestNode(new LonLat(lonLatFromString[0], lonLatFromString[1]));
-        ElenaNode to = this.geoDataDAL.getNearestNode(new LonLat(lonLatToString[0], lonLatToString[1]));
+        Node from = this.geoDataDAL.getNearestNode(new LonLat(lonLatFromString[0], lonLatFromString[1]));
+        Node to = this.geoDataDAL.getNearestNode(new LonLat(lonLatToString[0], lonLatToString[1]));
 
         return pathFinder.findPath(from, to);
     }

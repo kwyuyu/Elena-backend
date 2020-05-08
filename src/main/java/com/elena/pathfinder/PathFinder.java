@@ -1,6 +1,6 @@
 package com.elena.pathfinder;
 
-import com.elena.model.ElenaNode;
+import com.elena.model.Node;
 import com.elena.model.Path;
 import com.elena.repository.GeoDataDAL;
 
@@ -21,5 +21,5 @@ public abstract class PathFinder {
      * @param end
      * @return
      */
-    abstract public List<Path> findPath(ElenaNode start, ElenaNode end);
+    abstract public List<Path> findPath(Node start, Node end);
 }
