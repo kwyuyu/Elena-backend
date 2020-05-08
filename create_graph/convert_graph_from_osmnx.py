@@ -52,6 +52,9 @@ class MongodbDatabase(object):
 	def find_one_and_update(self, query, new_val):
 		self.collection.find_one_and_update(query, new_val)
 
+	def create_index(self, key, index_type):
+		self.collection.create_index((key, index_type))
+
 
 class GraphConverter(object):
 	def __init__(self, mongoDB):
@@ -86,8 +89,8 @@ class GraphConverter(object):
 								{'$setOnInsert':
 									 {'id': node['osmid'],
 									  'ele': self.get_elevation(node['x'], node['y']),
-									  'location': {'type': 'Point', 'coordinates': [node['x'], node['y']]},
-									  'neighbors': [],
+									  'coordinate': [node['x'], node['y']],
+									  'outGoingEdges': [],
 									  'address': self.get_address(node['x'], node['y'])}}
 								, True)
 
@@ -95,15 +98,15 @@ class GraphConverter(object):
 		# node1 -> node2
 		neighbors = self.get_neighbor_set(node1['osmid'])
 		if node2['osmid'] not in neighbors:
-			self.mongoDB.update_one({'id': node1['osmid']}, {'$push': {'neighbors': {'nei': node2['osmid'], 'cost': dist}}})
+			self.mongoDB.update_one({'id': node1['osmid']}, {'$push': {'outGoingEdges': {'from': node1['osmid'], 'to': node2['osmid'], 'cost': dist}}})
 
 		# node2 -> node1
 		neighbors = self.get_neighbor_set(node2['osmid'])
 		if node1['osmid'] not in neighbors:
-			self.mongoDB.update_one({'id': node2['osmid']}, {'$push': {'neighbors': {'nei': node1['osmid'], 'cost': dist}}})
+			self.mongoDB.update_one({'id': node2['osmid']}, {'$push': {'outGoingEdges': {'from': node2['osmid'], 'to': node1['osmid'], 'cost': dist}}})
 
 	def get_neighbor_set(self, osm_id):
-		return set([nei_obj['nei'] for nei_obj in self.mongoDB.find_one({'id': osm_id}, {'neighbors': 1})['neighbors']])
+		return set([nei_obj['to'] for nei_obj in self.mongoDB.find_one({'id': osm_id}, {'outGoingEdges': 1})['outGoingEdges']])
 
 
 	def convert_graph_from_osmnx(self, bbox, log, start_from = -1):
@@ -130,6 +133,12 @@ class GraphConverter(object):
 
 			if log:
 				logging.info(f"[{i}/{count}]... {time.time() - start} sec")
+
+		if log:
+			logging.info("create indexes")
+
+		self.mongoDB.create_index('id', pymongo.ASCENDING)
+		self.mongoDB.create_index('coordinates', pymongo.GEOSPHERE)
 
 		if log:
 			logging.info(f"[{count}/{count}]... complete {time.time() - start} sec")

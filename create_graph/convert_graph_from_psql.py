@@ -7,6 +7,7 @@ import logging
 import geopy
 import certifi
 import ssl
+import math
 
 
 class MongodbDatabase(object):
@@ -99,6 +100,18 @@ class GraphConverter(object):
 		geopy.geocoders.options.default_ssl_context = ctx
 		self.geo_locator = geopy.Nominatim(user_agent='find_address', timeout=None)
 
+	def calcDistance(self, lon1, lat1, lon2, lat2):
+		R = 6372800  # Earth radius in meters
+
+		phi1, phi2 = math.radians(lat1), math.radians(lat2)
+		dphi = math.radians(lat2 - lat1)
+		dlambda = math.radians(lon2 - lon1)
+
+		a = math.sin(dphi / 2) ** 2 + \
+			math.cos(phi1) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
+
+		return 2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
 	def get_elevation(self, lon, lat):
 		data = requests.get(self.elevation_url, {'locations': f'{lat},{lon}'}).json()
 		return data['results'][0]['elevation'] if data else None
@@ -116,22 +129,36 @@ class GraphConverter(object):
 			logging.info('start...')
 			logging.info('generate ways...')
 
-		ways = self.waysDB.execute_with_generator("select osm_id, cost, reverse_cost, source_osm, x1, y1, target_osm, x2, y2 from ways")
+		ways = self.waysDB.execute_with_generator("select osm_id, source_osm, x1, y1, target_osm, x2, y2 from ways")
 		count = 0
 		start = time.time()
-		for i, count, (way_id, cost, reverse_cost, source_id, source_lon, source_lat, target_id, target_lon, target_lat) in ways:
+		for i, count, (way_id, source_id, source_lon, source_lat, target_id, target_lon, target_lat) in ways:
 			if i < start_from:
 				continue
 
-			source_node = self.mongodbDB.find_one({'id': source_id})
-			if source_node is None:
-				self.mongodbDB.insert_one({'id': source_id, 'name': self.get_node_name(source_id), 'ele': self.get_elevation(source_lon, source_lat), 'location': {'type': 'Point', 'coordinates': [source_lon, source_lat]}, 'neighbors': [], 'address': self.get_address(source_lon, source_lat)})
-			self.mongodbDB.update_one({'id': source_id}, {'$push': {'neighbors': {'nei': target_id, 'cost': cost}}})
+			dist = self.calcDistance(source_lon, source_lat, target_lon, target_lat)
 
-			target_node = self.mongodbDB.find_one({'id': target_id})
-			if target_node is None:
-				self.mongodbDB.insert_one({'id': target_id, 'name': self.get_node_name(target_id), 'ele': self.get_elevation(target_lon, target_lat), 'location': {'type': 'Point', 'coordinates': [target_lon, target_lat]}, 'neighbors': [], 'address': self.get_address(target_lon, target_lat)})
-			self.mongodbDB.update_one({'id': target_id}, {'$push': {'neighbors': {'nei': source_id, 'cost': reverse_cost}}})
+			self.mongodbDB.update_one({'id': source_id},
+									{'$setOnInsert':
+										 {'id': source_id,
+										  'ele': self.get_elevation(source_lon, source_lat),
+										  'coordinate': [source_lon, source_lat],
+										  'outGoingEdges': [],
+										  'address': self.get_address(source_lon, source_lat)}}
+									, True)
+			self.mongodbDB.update_one({'id': source_id}, {'$push': {'outGoingEdges': {'from': source_id, 'to': target_id, 'cost': dist}}})
+
+			self.mongodbDB.update_one({'id': target_id},
+									{'$setOnInsert':
+										 {'id': target_id,
+										  'ele': self.get_elevation(target_lon, target_lat),
+										  'coordinate': [target_lon, target_lat],
+										  'outGoingEdges': [],
+										  'address': self.get_address(target_lon, target_lat)}}
+									, True)
+			self.mongodbDB.update_one({'id': target_id},
+									  {'$push': {'outGoingEdges': {'from': target_id, 'to': source_id, 'cost': dist}}})
+
 
 			if log:
 				logging.info(f"[{i}/{count}]... {time.time() - start} sec")
