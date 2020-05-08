@@ -1,7 +1,7 @@
 package com.elena.repository;
 
-import com.elena.model.ElenaNode;
 import com.elena.model.LonLat;
+import com.elena.model.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -23,53 +23,38 @@ public class MongodbDAL implements GeoDataDAL {
     }
 
     @Override
-    public ElenaNode getNodeByLonLat(LonLat lonLat) {
+    public Node getNodeByLonLat(LonLat lonLat) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("location.coordinates").is(new Double[]{lonLat.getLon(), lonLat.getLat()}));
-        return this.mongoTemplate.findOne(query, ElenaNode.class);
+        query.addCriteria(Criteria.where("coordinates").is(new Double[]{lonLat.getLon(), lonLat.getLat()}));
+        return this.mongoTemplate.findOne(query, Node.class);
     }
 
     @Override
-    public ElenaNode getNodeById(String id) {
+    public Node getNodeById(String id) {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(Long.valueOf(id)));
-        return this.mongoTemplate.findOne(query, ElenaNode.class);
+        return this.mongoTemplate.findOne(query, Node.class);
     }
 
     @Override
-    public ElenaNode getNodeByAddress(String address) {
+    public Node getNodeByAddress(String address) {
         Query query = new Query();
         query.addCriteria(Criteria.where("address").is(address));
-        return this.mongoTemplate.findOne(query, ElenaNode.class);
+        return this.mongoTemplate.findOne(query, Node.class);
     }
 
     @Override
-    public List<ElenaNode> getNeighborNodes(ElenaNode node) {
-        List<String> ids = new ArrayList<String>(){{
-            node.getNeighbors().forEach(
-                    (nei) -> add(nei.getNei())
-            );
-        }};
-
-        Query query = new Query();
-        query.addCriteria(Criteria.where("id").in(ids));
-
-        return this.mongoTemplate.find(query, ElenaNode.class);
-    }
-
-    @Override
-    public ElenaNode getNearestNode(LonLat lonLat) {
-        System.out.println(lonLat);
+    public Node getNearestNode(LonLat lonLat) {
         NearQuery nearQuery = NearQuery.near(lonLat.getLat(), lonLat.getLat());
         nearQuery.query(new Query()).spherical(true).limit(1);
-        return this.mongoTemplate.geoNear(nearQuery, ElenaNode.class).getContent().get(0).getContent();
+        return this.mongoTemplate.geoNear(nearQuery, Node.class).getContent().get(0).getContent();
     }
 
     @Override
     public List<String> getAutoCompleteSuggestions(String userInput) {
         Query query = new Query();
         query.addCriteria(Criteria.where("address").regex("^" + userInput, "i"));
-        List<ElenaNode> results = this.mongoTemplate.find(query, ElenaNode.class);
+        List<Node> results = this.mongoTemplate.find(query, Node.class);
         return new ArrayList<String>(){{
             results.forEach(
                     (node) -> {

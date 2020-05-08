@@ -1,8 +1,8 @@
 package com.elena.repository;
 
 import com.elena.model.ElenaGraph;
-import com.elena.model.ElenaNode;
 import com.elena.model.LonLat;
+import com.elena.model.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -23,31 +23,22 @@ public class GraphDAL implements GeoDataDAL {
 
 
     @Override
-    public ElenaNode getNodeByLonLat(LonLat lonLat) {
+    public Node getNodeByLonLat(LonLat lonLat) {
         return this.graph.getNodeByLonLat(lonLat);
     }
 
     @Override
-    public ElenaNode getNodeById(String id) {
+    public Node getNodeById(String id) {
         return this.graph.getNodeById(id);
     }
 
     @Override
-    public ElenaNode getNodeByAddress(String address) {
+    public Node getNodeByAddress(String address) {
         return this.graph.getNodeByAddress(address);
     }
 
     @Override
-    public List<ElenaNode> getNeighborNodes(ElenaNode node) {
-        return new ArrayList<ElenaNode>(){{
-            node.getNeighbors().forEach(
-                    (nei) -> add(getNodeById(nei.getNei()))
-            );
-        }};
-    }
-
-    @Override
-    public ElenaNode getNearestNode(LonLat lonLat) {
+    public Node getNearestNode(LonLat lonLat) {
         return this.graph.getNearestNode(lonLat);
     }
 

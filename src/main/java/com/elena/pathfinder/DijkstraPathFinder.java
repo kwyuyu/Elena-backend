@@ -20,10 +20,10 @@ public class DijkstraPathFinder extends PathFinder {
     }
 
     private class WrapperNode implements Comparable<WrapperNode> {
-        ElenaNode node;
+        Node node;
         double cost;
 
-        public WrapperNode(ElenaNode node) {
+        public WrapperNode(Node node) {
             this.node = node;
             this.cost = 0.0;
         }
@@ -36,16 +36,16 @@ public class DijkstraPathFinder extends PathFinder {
 
 
     @Override
-    public List<Path> findPath(ElenaNode start, ElenaNode end) {
+    public List<Path> findPath(Node start, Node end) {
         List<Path> paths = new ArrayList<>();
         PriorityQueue<WrapperNode> queue = new PriorityQueue<>();
-        Map<ElenaNode, ElenaNode> nodeAncestor = new HashMap<>();
-        Map<ElenaNode, WrapperNode> nodeList = new HashMap<>();
+        Map<Node, Node> nodeAncestor = new HashMap<>();
+        Map<String, WrapperNode> nodeList = new HashMap<>();
 
         WrapperNode startWrapperNode = new WrapperNode(start);
 
         queue.add(startWrapperNode);
-        nodeList.put(start, startWrapperNode);
+        nodeList.put(start.getId(), startWrapperNode);
         nodeAncestor.put(start, null);
 
         while (!queue.isEmpty()) {
@@ -56,29 +56,27 @@ public class DijkstraPathFinder extends PathFinder {
                 return paths;
             }
 
-            for (ElenaNeighbor nei: candidateWrapperNode.node.getNeighbors()) {
-                ElenaNode neighborNode = this.geoDataDAL.getNodeById(nei.getNei());
-                Edge edge = new Edge(candidateWrapperNode.node, neighborNode);
-                if (!this.excludedEdges.contains(edge)) {
-                    double newCost = candidateWrapperNode.cost + nei.getCost();
-                    if (!nodeList.containsKey(neighborNode)) {
-                        WrapperNode neighborWrapperNode = new WrapperNode(neighborNode);
-                        nodeList.put(neighborNode, neighborWrapperNode);
+
+            for (Edge neiEdge: candidateWrapperNode.node.getOutGoingEdges()) {
+                if (!this.excludedEdges.contains(neiEdge)) {
+                    double newCost = candidateWrapperNode.cost + neiEdge.getCost();
+                    if (!nodeList.containsKey(neiEdge.getTo())) {
+                        WrapperNode neighborWrapperNode = new WrapperNode(this.geoDataDAL.getNodeById(neiEdge.getTo()));
+                        nodeList.put(neiEdge.getTo(), neighborWrapperNode);
                         neighborWrapperNode.cost = newCost;
                         queue.add(neighborWrapperNode);
-                        nodeAncestor.put(neighborNode, candidateWrapperNode.node);
+                        nodeAncestor.put(neighborWrapperNode.node, candidateWrapperNode.node);
                     }
-                    else if (newCost < nodeList.get(neighborNode).cost) {
-                        nodeList.get(neighborNode).cost = newCost;
-                        nodeAncestor.put(neighborNode, candidateWrapperNode.node);
+                    else if (newCost < nodeList.get(neiEdge.getTo()).cost) {
+                        WrapperNode neighborWrapperNode = nodeList.get(neiEdge.getTo());
+                        neighborWrapperNode.cost = newCost;
+                        nodeAncestor.put(neighborWrapperNode.node, candidateWrapperNode.node);
                     }
                 }
             }
-
         }
 
         return paths;
     }
-
 
 }

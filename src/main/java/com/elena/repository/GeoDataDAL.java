@@ -1,7 +1,7 @@
 package com.elena.repository;
 
-import com.elena.model.ElenaNode;
 import com.elena.model.LonLat;
+import com.elena.model.Node;
 
 
 import java.util.List;
@@ -10,39 +10,32 @@ import java.util.List;
 public interface GeoDataDAL {
 
     /**
-     * get ElenaNode by longitude and latitude
+     * get Node by longitude and latitude
      * @param lonLat
      * @return
      */
-    ElenaNode getNodeByLonLat(LonLat lonLat);
+    Node getNodeByLonLat(LonLat lonLat);
 
     /**
-     * get ElenaNode by node id (osm id)
+     * get Node by node id (osm id)
      * @param id
      * @return
      */
-    ElenaNode getNodeById(String id);
+    Node getNodeById(String id);
 
     /**
-     * get ElenaNode by address
+     * get Node by address
      * @param address
      * @return
      */
-    ElenaNode getNodeByAddress(String address);
+    Node getNodeByAddress(String address);
 
     /**
-     * get a list of neighbor ElenaNode by given node
-     * @param node
-     * @return
-     */
-    List<ElenaNode> getNeighborNodes(ElenaNode node);
-
-    /**
-     * get the nearest ElenaNode by longitude and latitude
+     * get the nearest Node by longitude and latitude
      * @param lonLat
      * @return
      */
-    ElenaNode getNearestNode(LonLat lonLat);
+    Node getNearestNode(LonLat lonLat);
 
     /**
      * get a list of address suggestions given an user input

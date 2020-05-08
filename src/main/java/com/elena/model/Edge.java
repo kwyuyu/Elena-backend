@@ -4,41 +4,63 @@ import java.util.Objects;
 
 public class Edge {
 
-    private ElenaNode startNode;
-    private ElenaNode endNode;
+    private String from;
+    private String to;
+    private double cost;
 
-    public Edge(ElenaNode startNode, ElenaNode endNode) {
-        this.startNode = startNode;
-        this.endNode = endNode;
+
+    public Edge(String from, String to, double cost) {
+        this.from = from;
+        this.to = to;
+        this.cost = cost;
     }
 
-    public ElenaNode getStartNode() {
-        return startNode;
+
+    public String getFrom() {
+        return from;
     }
 
-    public void setStartNode(ElenaNode startNode) {
-        this.startNode = startNode;
+    public void setFrom(String from) {
+        this.from = from;
     }
 
-    public ElenaNode getEndNode() {
-        return endNode;
+    public String getTo() {
+        return to;
     }
 
-    public void setEndNode(ElenaNode endNode) {
-        this.endNode = endNode;
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
     @Override
-    public boolean equals(Object other) {
-        Edge otherEdge = (Edge) other;
-        ElenaNode otherStartNode = otherEdge.getStartNode();
-        ElenaNode otherEndNode = otherEdge.getEndNode();
-        return (this.startNode.getId().equals(otherStartNode.getId())) &&
-                (this.endNode.getId().equals(otherEndNode.getId()));
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Edge edge = (Edge) o;
+        return Double.compare(edge.cost, cost) == 0 &&
+                Objects.equals(from, edge.from) &&
+                Objects.equals(to, edge.to);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startNode, endNode);
+        return Objects.hash(from, to, cost);
+    }
+
+    @Override
+    public String toString() {
+        return "Edge{" +
+                "from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", cost=" + cost +
+                '}';
     }
 }

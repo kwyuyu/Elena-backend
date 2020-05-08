@@ -14,31 +14,31 @@ public interface ElenaGraph {
     /**
      * get Node by address
      * @param address
-     * @return ElenaNode
+     * @return Node
      */
-    public ElenaNode getNodeByAddress(String address);
+    public Node getNodeByAddress(String address);
 
     /**
      * get Node by node id (osm id)
      * @param id
-     * @return ElenaNode
+     * @return Node
      */
-    public ElenaNode getNodeById(String id);
+    public Node getNodeById(String id);
 
 
     /**
      * get Node by longitude and latitude
      * @param lonLat
-     * @return ElenaNode
+     * @return Node
      */
-    public ElenaNode getNodeByLonLat(LonLat lonLat);
+    public Node getNodeByLonLat(LonLat lonLat);
 
     /**
      * get the nearest node given a pair of longitude and latitude
      * @param lonLat
-     * @return ElenaNode
+     * @return Node
      */
-    public ElenaNode getNearestNode(LonLat lonLat);
+    public Node getNearestNode(LonLat lonLat);
 
     /**
      *

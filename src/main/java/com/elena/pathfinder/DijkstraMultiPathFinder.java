@@ -1,7 +1,7 @@
 package com.elena.pathfinder;
 
 import com.elena.model.Edge;
-import com.elena.model.ElenaNode;
+import com.elena.model.Node;
 import com.elena.model.Path;
 import com.elena.repository.GeoDataDAL;
 
@@ -29,7 +29,7 @@ public class DijkstraMultiPathFinder extends PathFinder {
 
 
     @Override
-    public List<Path> findPath(ElenaNode start, ElenaNode end) {
+    public List<Path> findPath(Node start, Node end) {
         Set<Edge> excludedEdges = new HashSet<>();
         PathFinder pathFinder = new DijkstraPathFinder(this.geoDataDAL, excludedEdges);
 

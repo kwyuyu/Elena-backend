@@ -11,9 +11,9 @@ import java.util.Map;
 
 public class Graph implements ElenaGraph {
 
-    private Map<String, ElenaNode> nodeById = new HashMap<>();
-    private Map<String, ElenaNode> nodeByAddress = new HashMap<>();
-    private Map<LonLat, ElenaNode> nodeByLonLat = new HashMap<>();
+    private Map<String, Node> nodeById = new HashMap<>();
+    private Map<String, Node> nodeByAddress = new HashMap<>();
+    private Map<LonLat, Node> nodeByLonLat = new HashMap<>();
     private AutoComplete addressAutoComplete = new BruteForceAutoComplete();
 
     public Graph() {
@@ -38,26 +38,26 @@ public class Graph implements ElenaGraph {
     }
 
     @Override
-    public ElenaNode getNodeByAddress(String address) {
+    public Node getNodeByAddress(String address) {
         return this.nodeByAddress.getOrDefault(address, null);
     }
 
     @Override
-    public ElenaNode getNodeById(String id) {
+    public Node getNodeById(String id) {
         return this.nodeById.getOrDefault(id, null);
     }
 
     @Override
-    public ElenaNode getNodeByLonLat(LonLat lonLat) {
+    public Node getNodeByLonLat(LonLat lonLat) {
         return this.nodeByLonLat.getOrDefault(lonLat, null);
     }
 
     @Override
-    public ElenaNode getNearestNode(LonLat lonLat) {
+    public Node getNearestNode(LonLat lonLat) {
         double minDist = Double.MAX_VALUE;
-        ElenaNode nearestNode = null;
+        Node nearestNode = null;
 
-        for (ElenaNode node: this.nodeById.values()) {
+        for (Node node: this.nodeById.values()) {
             double dist = ElenaUtils.distanceBetweenNodes(lonLat, node.getLonLat());
             if (dist < minDist) {
                 minDist = dist;

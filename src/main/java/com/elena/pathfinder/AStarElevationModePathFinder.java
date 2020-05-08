@@ -1,6 +1,6 @@
 package com.elena.pathfinder;
 
-import com.elena.model.ElenaNode;
+import com.elena.model.Node;
 import com.elena.model.Path;
 import com.elena.utils.ElevationMode;
 
@@ -19,7 +19,7 @@ public class AStarElevationModePathFinder extends PathFinder {
     }
 
     @Override
-    public List<Path> findPath(ElenaNode start, ElenaNode end) {
+    public List<Path> findPath(Node start, Node end) {
         PathFinder pathFinder = new AStarMultiPathFinder(this.geoDataDAL, 20);
         List<Path> paths = pathFinder.findPath(start, end);
 

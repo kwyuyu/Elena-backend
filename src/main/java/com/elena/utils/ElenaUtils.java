@@ -1,7 +1,7 @@
 package com.elena.utils;
 
-import com.elena.model.ElenaNode;
 import com.elena.model.LonLat;
+import com.elena.model.Node;
 
 public class ElenaUtils {
 
@@ -24,7 +24,7 @@ public class ElenaUtils {
      * @param goalNode
      * @return
      */
-    public static double distanceBetweenNodes(ElenaNode startNode, ElenaNode goalNode) {
+    public static double distanceBetweenNodes(Node startNode, Node goalNode) {
         LonLat start = startNode.getLonLat();
         LonLat goal = goalNode.getLonLat();
 

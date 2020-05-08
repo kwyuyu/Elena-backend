@@ -1,6 +1,6 @@
 package com.elena.pathfinder;
 
-import com.elena.model.ElenaNode;
+import com.elena.model.Node;
 import com.elena.model.Path;
 import com.elena.utils.ElevationMode;
 
@@ -20,7 +20,7 @@ public class DijkstraElevationModePathFinder extends PathFinder {
 
 
     @Override
-    public List<Path> findPath(ElenaNode start, ElenaNode end) {
+    public List<Path> findPath(Node start, Node end) {
         PathFinder pathFinder = new DijkstraMultiPathFinder(this.geoDataDAL, 20);
         List<Path> paths = pathFinder.findPath(start, end);
 
