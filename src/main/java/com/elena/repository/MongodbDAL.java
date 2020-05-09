@@ -51,16 +51,13 @@ public class MongodbDAL implements GeoDataDAL {
     }
 
     @Override
-    public List<String> getAutoCompleteSuggestions(String userInput) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("address").regex("^" + userInput, "i"));
-        List<Node> results = this.mongoTemplate.find(query, Node.class);
+    public List<String> getAllAddress() {
         return new ArrayList<String>(){{
-            results.forEach(
-                    (node) -> {
-                        add(node.getAddress());
-                    }
-            );
+           mongoTemplate.findAll(Node.class, "graph").forEach(
+                   (node) -> {
+                       add(node.getAddress());
+                   }
+           );
         }};
     }
 

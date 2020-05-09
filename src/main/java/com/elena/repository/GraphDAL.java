@@ -1,23 +1,22 @@
 package com.elena.repository;
 
-import com.elena.model.ElenaGraph;
+import com.elena.model.Graph;
 import com.elena.model.LonLat;
 import com.elena.model.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 @Repository("graphDAL")
 public class GraphDAL implements GeoDataDAL {
 
-    private final ElenaGraph graph;
+    private final Graph graph;
 
     @Autowired
-    public GraphDAL(@Qualifier("graph") ElenaGraph graph) {
+    public GraphDAL(@Qualifier("graph") Graph graph) {
         this.graph = graph;
     }
 
@@ -43,8 +42,7 @@ public class GraphDAL implements GeoDataDAL {
     }
 
     @Override
-    public List<String> getAutoCompleteSuggestions(String userInput) {
-        return this.graph.getAutoCompleteSuggestions(userInput);
+    public List<String> getAllAddress() {
+        return this.graph.getAllAddresses();
     }
-
 }

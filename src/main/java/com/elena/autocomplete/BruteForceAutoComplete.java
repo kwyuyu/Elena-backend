@@ -1,28 +1,26 @@
 package com.elena.autocomplete;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.elena.repository.GeoDataDAL;
+import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component("bruteForce")
 public class BruteForceAutoComplete implements AutoComplete {
 
-    private List<String> suggestions = new ArrayList<>();
+    private GeoDataDAL geoDataDAL;
 
     @Override
-    public void addSuggestion(String suggestion) {
-        this.suggestions.add(suggestion);
-    }
-
-    @Override
-    public void buildSuggestions(Collection<String> suggestions) {
-        this.suggestions.addAll(suggestions);
+    public void setGeoDataDAL(GeoDataDAL geoDataDAL) {
+        this.geoDataDAL = geoDataDAL;
     }
 
     @Override
     public List<String> getSuggestions(String userInput) {
-        return this.suggestions
+        return this.geoDataDAL.getAllAddress()
                 .stream()
-                .filter(address -> address.startsWith(userInput)).collect(Collectors.toList());
+                .filter(address -> address.startsWith(userInput.toLowerCase()))
+                .collect(Collectors.toList());
     }
 }

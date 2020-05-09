@@ -38,9 +38,8 @@ public interface GeoDataDAL {
     Node getNearestNode(LonLat lonLat);
 
     /**
-     * get a list of address suggestions given an user input
-     * @param userInput
+     * get a list of addresses
      * @return
      */
-    List<String> getAutoCompleteSuggestions(String userInput);
+    List<String> getAllAddress();
 }

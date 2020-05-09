@@ -1,6 +1,5 @@
 package com.elena.config;
 
-import com.elena.model.ElenaGraph;
 import com.elena.model.Graph;
 import com.elena.model.Node;
 import com.google.gson.Gson;
@@ -32,7 +31,7 @@ public class InMemoryGraphConfig {
      * @return ElenaGraph
      */
     @Bean(name = "graph")
-    public ElenaGraph getGraph() {
+    public Graph getGraph() {
         try {
             Gson gson = new Gson();
 
