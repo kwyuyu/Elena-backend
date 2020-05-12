@@ -11,6 +11,8 @@
 
 ## Configuration setting
 
+Only need to choose one way to access geo data (in memory, mongodb).
+
 ```
 elena:
   graph:
