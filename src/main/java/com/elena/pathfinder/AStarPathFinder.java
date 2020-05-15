@@ -25,24 +25,10 @@ public class AStarPathFinder extends PathFinder {
         double gCost;
         double hCost;
 
-        public WrapperNode(Node node) {
+        public WrapperNode(Node node, double gCost, Node hCostDestinationNode) {
             this.node = node;
-            this.fCost = 0.0;
-            this.gCost = 0.0;
-            this.hCost = 0.0;
-        }
-
-        public void setGCost(double gCost) {
             this.gCost = gCost;
-            this.calcFCost();
-        }
-
-        public void setHCost(double hCost) {
-            this.hCost = hCost;
-            this.calcFCost();
-        }
-
-        public void calcFCost() {
+            this.hCost = heuristic(node, hCostDestinationNode);
             this.fCost = this.gCost + this.hCost;
         }
 
@@ -52,7 +38,6 @@ public class AStarPathFinder extends PathFinder {
         }
     }
 
-
     @Override
     public List<Path> findPath(Node start, Node end) {
         List<Path> paths = new ArrayList<>();
@@ -60,8 +45,7 @@ public class AStarPathFinder extends PathFinder {
         Map<Node, Node> nodeAncestor = new HashMap<>();
         Map<String, WrapperNode> nodeList = new HashMap<>();
 
-        WrapperNode startWrapperNode = new WrapperNode(start);
-        startWrapperNode.setHCost(this.heuristic(start, end));
+        WrapperNode startWrapperNode = new WrapperNode(start, 0.0, end);
 
         queue.add(startWrapperNode);
         nodeList.put(start.getId(), startWrapperNode);
@@ -75,21 +59,23 @@ public class AStarPathFinder extends PathFinder {
                 return paths;
             }
 
-
             for (Edge neiEdge: candidateWrapperNode.node.getOutGoingEdges()) {
                 if (!this.excludedEdges.contains(neiEdge)) {
                     double newGCost = candidateWrapperNode.gCost + neiEdge.getCost();
                     if (!nodeList.containsKey(neiEdge.getTo())) {
-                        WrapperNode neighborWrapperNode = new WrapperNode(this.geoDataDAL.getNodeById(neiEdge.getTo()));
+                        WrapperNode neighborWrapperNode = new WrapperNode(this.geoDataDAL.getNodeById(neiEdge.getTo()), 0.0, end);
                         nodeList.put(neiEdge.getTo(), neighborWrapperNode);
-                        neighborWrapperNode.setGCost(newGCost);
-                        neighborWrapperNode.setHCost(this.heuristic(candidateWrapperNode.node, neighborWrapperNode.node));
+                        neighborWrapperNode.gCost = newGCost;
+                        neighborWrapperNode.fCost = neighborWrapperNode.gCost + neighborWrapperNode.hCost;
                         queue.add(neighborWrapperNode);
                         nodeAncestor.put(neighborWrapperNode.node, candidateWrapperNode.node);
                     }
                     else if (newGCost < nodeList.get(neiEdge.getTo()).gCost) {
                         WrapperNode neighborWrapperNode = nodeList.get(neiEdge.getTo());
-                        neighborWrapperNode.setGCost(newGCost);
+                        queue.remove(neighborWrapperNode);
+                        neighborWrapperNode.gCost = newGCost;
+                        neighborWrapperNode.fCost = neighborWrapperNode.gCost + neighborWrapperNode.hCost;
+                        queue.add(neighborWrapperNode);
                         nodeAncestor.put(neighborWrapperNode.node, candidateWrapperNode.node);
                     }
                 }
@@ -99,11 +85,8 @@ public class AStarPathFinder extends PathFinder {
         return paths;
     }
 
-
-
-
     private double heuristic(Node startNode, Node goalNode) {
-        return ElenaUtils.distanceBetweenNodes(startNode, goalNode);
+        return 0.97 * ElenaUtils.distanceBetweenNodes(startNode, goalNode);
     }
 
 

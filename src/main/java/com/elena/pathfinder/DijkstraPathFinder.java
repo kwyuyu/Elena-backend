@@ -56,7 +56,6 @@ public class DijkstraPathFinder extends PathFinder {
                 return paths;
             }
 
-
             for (Edge neiEdge: candidateWrapperNode.node.getOutGoingEdges()) {
                 if (!this.excludedEdges.contains(neiEdge)) {
                     double newCost = candidateWrapperNode.cost + neiEdge.getCost();
@@ -69,7 +68,9 @@ public class DijkstraPathFinder extends PathFinder {
                     }
                     else if (newCost < nodeList.get(neiEdge.getTo()).cost) {
                         WrapperNode neighborWrapperNode = nodeList.get(neiEdge.getTo());
+                        queue.remove(neighborWrapperNode);
                         neighborWrapperNode.cost = newCost;
+                        queue.add(neighborWrapperNode);
                         nodeAncestor.put(neighborWrapperNode.node, candidateWrapperNode.node);
                     }
                 }
@@ -78,5 +79,6 @@ public class DijkstraPathFinder extends PathFinder {
 
         return paths;
     }
+
 
 }
